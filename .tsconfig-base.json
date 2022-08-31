@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "removeComments": true,
+        "noUncheckedIndexedAccess": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "skipLibCheck": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "sourceMap": false,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "target": "es5",
+        "lib": ["es2019"]
+    }
+}

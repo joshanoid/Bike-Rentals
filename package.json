@@ -1,0 +1,33 @@
+{
+    "name": "jozsef-varga",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git@git.toptal.com:screening/Jozsef-Varga.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@babel/eslint-parser": "7.18.9",
+        "@typescript-eslint/eslint-plugin": "5.36.1",
+        "@typescript-eslint/parser": "5.36.1",
+        "eslint": "8.23.0",
+        "eslint-config-airbnb": "19.0.4",
+        "eslint-config-prettier": "8.5.0",
+        "eslint-import-resolver-typescript": "3.5.0",
+        "eslint-module-utils": "2.7.4",
+        "eslint-plugin-functional": "4.2.2",
+        "eslint-plugin-import": "2.26.0",
+        "eslint-plugin-prettier": "4.2.1",
+        "eslint-plugin-react": "7.31.1",
+        "eslint-plugin-react-hooks": "4.6.0",
+        "eslint-plugin-unicorn": "43.0.2",
+        "prettier": "2.7.1",
+        "typescript": "4.8.2"
+    }
+}
