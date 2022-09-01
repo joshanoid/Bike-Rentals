@@ -1,0 +1,14 @@
+{
+    "extends": "../tsconfig-base.json",
+    "compilerOptions": {
+        "esModuleInterop": true,
+        "target": "es6",
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "jsx": "react",
+        "baseUrl": "src",
+        "paths": {
+            "shared/*": ["../../shared/src/*"]
+        }
+    },
+    "include": ["./src"]
+}
