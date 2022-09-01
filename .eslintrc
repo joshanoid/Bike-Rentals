@@ -1,16 +1,30 @@
 {
-    "extends": ["airbnb", "prettier", "plugin:prettier/recommended", "plugin:unicorn/recommended"],
+    "extends": [
+        "airbnb",
+        "prettier",
+        "plugin:prettier/recommended",
+        "plugin:unicorn/recommended",
+        "plugin:import/recommended",
+        "plugin:import/typescript"
+    ],
     "parser": "@babel/eslint-parser",
-    "plugins": ["react-hooks", "functional", "jest-formatting", "unicorn"],
+    "plugins": ["react-hooks", "functional", "unicorn"],
     "settings": {
+        "import/parsers": {
+            "@typescript-eslint/parser": [".ts", ".tsx"]
+        },
         "import/resolver": {
             "node": {
                 "extensions": [".js", ".jsx", ".ts", ".tsx"],
                 "moduleDirectory": ["node_modules", "src/"]
             },
-            "eslint-import-resolver-typescript": true
+            "eslint-import-resolver-typescript": true,
+            "typescript": {
+                "project": ["./client/tsconfig.json", "./server/tsconfig.json", "./shared/tsconfig.json"]
+            }
         }
     },
+
     "env": {
         "browser": true,
         "node": true,
@@ -146,7 +160,7 @@
             "parser": "@typescript-eslint/parser",
             "parserOptions": {
                 "ecmaVersion": 6,
-                "project": ["./client/tsconfig.json", "./server/tsconfig.json"],
+                "project": ["./client/tsconfig.json", "./server/tsconfig.json", "./shared/tsconfig.json"],
                 "sourceType": "module"
             },
             "plugins": ["@typescript-eslint"],
@@ -215,19 +229,6 @@
                 "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
                 "@typescript-eslint/no-empty-interface": "off",
                 "@typescript-eslint/no-explicit-any": "off"
-            }
-        },
-        {
-            "files": ["**/*.test.*"],
-            "env": {
-                "jest": true
-            },
-            "extends": ["plugin:jest/recommended"],
-            "rules": {
-                "max-len": "off",
-                "no-unused-expressions": "off",
-                "no-useless-computed-key": "off",
-                "react/no-find-dom-node": "off"
             }
         }
     ]
