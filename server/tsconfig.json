@@ -8,5 +8,6 @@
             "shared/*": ["../../shared/src/*"]
         }
     },
-    "include": ["./src"]
+    "include": ["./src"],
+    "files": ["src/global.d.ts"]
 }
