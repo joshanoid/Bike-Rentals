@@ -1,23 +1,24 @@
 import * as express from 'express'
 
 import { getErrorMessage } from 'utils/error'
+import { authenticateJWTToken } from 'utils/auth'
 import UserModel from 'models/user'
 
 const router: express.Router = express.Router()
 
 router
-    .get('/users', async (_req: express.Request, res: express.Response) => {
+    .get('/users', authenticateJWTToken, async (_req: express.Request, res: express.Response) => {
         const users = await UserModel.find()
 
         res.status(200).json(users)
     })
-    .get('/users/:username', async (req: express.Request, res: express.Response) => {
+    .get('/users/:username', authenticateJWTToken, async (req: express.Request, res: express.Response) => {
         const { username } = req.params
         const user = await UserModel.findOne({ username })
 
         res.status(200).json(user)
     })
-    .post('/users', async (req: express.Request, res: express.Response) => {
+    .post('/users', authenticateJWTToken, async (req: express.Request, res: express.Response) => {
         try {
             const newUser = new UserModel({ ...req.body })
 
@@ -28,7 +29,7 @@ router
             res.status(400).json({ message: getErrorMessage(error) })
         }
     })
-    .put('/users/:username', async (req: express.Request, res: express.Response) => {
+    .put('/users/:username', authenticateJWTToken, async (req: express.Request, res: express.Response) => {
         const { username } = req.params
         const { password, type } = req.body
 
@@ -38,7 +39,7 @@ router
 
         res.status(200).json(updatedUser)
     })
-    .delete('/users/:username', async (req: express.Request, res: express.Response) => {
+    .delete('/users/:username', authenticateJWTToken, async (req: express.Request, res: express.Response) => {
         const { username } = req.params
         const deletedUser = await UserModel.findOneAndDelete({ username })
 
