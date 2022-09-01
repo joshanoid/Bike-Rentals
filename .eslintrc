@@ -224,6 +224,12 @@
             }
         },
         {
+            "files": ["server/**/*"],
+            "rules": {
+                "no-console": "off"
+            }
+        },
+        {
             "files": ["**/*.d.ts"],
             "rules": {
                 "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
