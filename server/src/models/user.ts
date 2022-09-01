@@ -1,10 +1,8 @@
-import { Document, model, Schema } from 'mongoose'
-import uniqueValidator from 'mongoose-unique-validator'
-import bcrypt from 'bcrypt'
+import { model, Schema } from 'mongoose'
+import * as uniqueValidator from 'mongoose-unique-validator'
+import * as bcrypt from 'bcrypt'
 
 import { User } from 'shared/types'
-
-type UserDocument = User & Document
 
 const userSchema = new Schema<User>({
     username: {
@@ -29,8 +27,9 @@ userSchema.pre('save', function (next) {
     if (!this.isModified('password')) {
         return next()
     }
+
     this.password = bcrypt.hashSync(this.password, 10)
     next()
 })
 
-export default model<UserDocument, User>('User', userSchema)
+export default model<User>('User', userSchema)
