@@ -1,10 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
 import * as jwt from 'jsonwebtoken'
 
+import { User } from 'shared/types'
+
 import { TokenRequest } from './types'
 
-export const generateAccessToken = (username: string) =>
-    jwt.sign(username, process.env.JWT_TOKEN_SECRET, { expiresIn: '1h' })
+export const generateAccessToken = ({ username, type }: User) =>
+    jwt.sign({ username, type }, process.env.JWT_TOKEN_SECRET, { expiresIn: '1h' })
 
 export const authenticateJWTToken = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization
@@ -12,10 +14,8 @@ export const authenticateJWTToken = (req: Request, res: Response, next: NextFunc
 
     if (token) {
         jwt.verify(token, process.env.JWT_TOKEN_SECRET, {}, (error, verifiedToken) => {
-            console.log(error)
-
             if (error) {
-                res.sendStatus(403)
+                res.status(403).send('Unauthorized')
             } else {
                 // eslint-disable-next-line functional/immutable-data
                 ;(req as TokenRequest).token = verifiedToken
@@ -24,6 +24,6 @@ export const authenticateJWTToken = (req: Request, res: Response, next: NextFunc
             }
         })
     } else {
-        res.sendStatus(401)
+        res.status(401).send('Unauthorized')
     }
 }
