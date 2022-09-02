@@ -1,6 +1,6 @@
 import * as express from 'express'
 
-import { getErrorMessage } from 'utils/error'
+import { getErrorMessage } from 'shared/error'
 import { authenticateJWTToken } from 'utils/auth'
 import UserModel from 'models/user'
 

@@ -2,7 +2,7 @@ import * as express from 'express'
 import * as bcrypt from 'bcrypt'
 
 import { User } from 'shared/types'
-import { getErrorMessage } from 'utils/error'
+import { getErrorMessage } from 'shared/error'
 import { generateAccessToken } from 'utils/auth'
 import UserModel from 'models/user'
 
