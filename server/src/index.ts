@@ -1,6 +1,7 @@
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
 import * as dotenv from 'dotenv'
+import * as cors from 'cors'
 
 import { db } from './utils/db'
 import usersRoute from './routes/users'
@@ -10,6 +11,11 @@ dotenv.config()
 
 const app = express()
 
+app.use(
+    cors({
+        origin: ['http://localhost:8080'],
+    }),
+)
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(usersRoute)
