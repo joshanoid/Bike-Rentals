@@ -7,7 +7,8 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "lint": "eslint --ext .ts,.tsx,.js,.jsx ./client/src ./server/src ./shared/src",
         "start-server": "nodemon",
-        "mongo": "mongod --dbpath ~/data/db --bind_ip_all"
+        "mongo": "mongod --dbpath ~/data/db --bind_ip_all",
+        "start-frontend": "webpack serve --config ./client/webpack.config.js --mode development --open"
     },
     "repository": {
         "type": "git",
@@ -16,6 +17,10 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@emotion/react": "11.10.4",
+        "@emotion/styled": "11.10.4",
+        "@mui/material": "5.10.3",
+        "axios": "0.27.2",
         "body-parser": "1.20.0",
         "cors": "2.8.5",
         "dotenv": "16.0.2",
@@ -23,7 +28,10 @@
         "express-validator": "6.14.2",
         "jsonwebtoken": "8.5.1",
         "mongoose": "6.5.4",
-        "mongoose-unique-validator": "3.1.0"
+        "mongoose-unique-validator": "3.1.0",
+        "react": "18.2.0",
+        "react-dom": "18.2.0",
+        "react-router-dom": "6.3.0"
     },
     "devDependencies": {
         "@babel/eslint-parser": "7.18.9",
@@ -31,9 +39,11 @@
         "@types/express": "4.17.13",
         "@types/jsonwebtoken": "8.5.9",
         "@types/mongoose-unique-validator": "1.0.6",
+        "@types/react-dom": "18.0.6",
         "@typescript-eslint/eslint-plugin": "5.36.1",
         "@typescript-eslint/parser": "5.36.1",
         "bcrypt": "5.0.1",
+        "css-loader": "6.7.1",
         "eslint": "8.23.0",
         "eslint-config-airbnb": "19.0.4",
         "eslint-config-prettier": "8.5.0",
@@ -45,10 +55,16 @@
         "eslint-plugin-react": "7.31.1",
         "eslint-plugin-react-hooks": "4.6.0",
         "eslint-plugin-unicorn": "43.0.2",
+        "html-webpack-plugin": "5.5.0",
         "nodemon": "2.0.19",
         "prettier": "2.7.1",
+        "style-loader": "3.3.1",
+        "ts-loader": "9.3.1",
         "ts-node": "10.9.1",
         "tsconfig-paths": "4.1.0",
-        "typescript": "4.8.2"
+        "typescript": "4.8.2",
+        "webpack": "5.74.0",
+        "webpack-cli": "4.10.0",
+        "webpack-dev-server": "4.10.1"
     }
 }
