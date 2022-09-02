@@ -10,7 +10,7 @@ const router: express.Router = express.Router()
 
 router
     .post(
-        '/user/login',
+        '/auth/login',
         async (req: express.Request<Record<string, never>, User | string, User>, res: express.Response) => {
             const { username, password } = req.body
             const foundUser = await UserModel.findOne({ username })
@@ -31,7 +31,7 @@ router
         },
     )
     .post(
-        '/user/register',
+        '/auth/register',
         async (req: express.Request<Record<string, never>, User | string, User>, res: express.Response) => {
             try {
                 await UserModel.create(req.body)
