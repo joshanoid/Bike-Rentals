@@ -4,6 +4,7 @@ import * as dotenv from 'dotenv'
 
 import { db } from './utils/db'
 import usersRoute from './routes/users'
+import userRoute from './routes/user'
 
 dotenv.config()
 
@@ -12,6 +13,7 @@ const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(usersRoute)
+app.use(userRoute)
 
 const start = async () => {
     try {
