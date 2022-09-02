@@ -24,11 +24,9 @@ const userSchema = new Schema<User>({
 userSchema.plugin(uniqueValidator, { message: 'is already taken.' })
 
 userSchema.pre('save', function (next) {
-    if (!this.isModified('password')) {
-        return next()
+    if (this.isModified('password')) {
+        this.password = bcrypt.hashSync(this.password, 10)
     }
-
-    this.password = bcrypt.hashSync(this.password, 10)
     next()
 })
 
