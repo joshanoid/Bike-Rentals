@@ -152,7 +152,8 @@
         "unicorn/prefer-object-from-entries": "off",
         "unicorn/prefer-switch": ["error", { "minimumCases": 4 }],
         "unicorn/prefer-top-level-await": "off",
-        "unicorn/prevent-abbreviations": "off"
+        "unicorn/prevent-abbreviations": "off",
+        "no-underscore-dangle": "off"
     },
     "overrides": [
         {
