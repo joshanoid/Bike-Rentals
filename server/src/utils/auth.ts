@@ -27,3 +27,16 @@ export const authenticateJWTToken = (req: Request, res: Response, next: NextFunc
         res.status(401).send('Unauthorized')
     }
 }
+
+export const decodeJWTToken = (req: Request) => {
+    const authHeader = req.headers.authorization
+    const token = authHeader?.split(' ')[1]
+
+    if (token) {
+        const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET) as User
+
+        return decoded
+    }
+
+    return undefined
+}
