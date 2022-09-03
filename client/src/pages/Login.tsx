@@ -3,10 +3,13 @@ import { Alert, Box, Button, Stack, TextField, Typography } from '@mui/material'
 import axios from 'axios'
 
 import { getErrorMessage } from 'shared/error'
-import { setAuthData } from 'utils/auth'
-import { User } from 'shared/types'
+import { Auth } from 'utils/types'
 
-export const Login = () => {
+type Props = {
+    setAuth: (authObject: Auth) => void
+}
+
+export const Login = ({ setAuth }: Props) => {
     const usernameRef = React.useRef<HTMLInputElement>(null)
     const passwordRef = React.useRef<HTMLInputElement>(null)
     const [requestError, setRequestError] = React.useState('')
@@ -20,12 +23,12 @@ export const Login = () => {
         try {
             const {
                 data: { user, token },
-            } = await axios.post<{ user: User; token: string }>(`${process.env.API_URL}/auth/${mode}`, {
+            } = await axios.post<NonNullable<Auth>>(`${process.env.API_URL}/auth/${mode}`, {
                 username,
                 password,
             })
 
-            setAuthData(user, token)
+            setAuth({ user, token })
         } catch (error) {
             setRequestError(getErrorMessage(error))
         }
