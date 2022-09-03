@@ -4,6 +4,7 @@ import { Navigate, Routes, Route } from 'react-router-dom'
 import { Home } from 'pages/Home'
 import { Login } from 'pages/Login'
 import { Logout } from 'pages/Logout'
+import { Dashboard } from 'pages/Dashboard'
 import { useAuthContext } from 'utils/auth'
 import { Auth } from 'utils/types'
 
@@ -16,8 +17,6 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
     return auth ? children : <Navigate to="/login" />
 }
-
-const Dashboard = () => <div>Im super protected</div>
 
 type Props = {
     setAuth: (authObject: Auth) => void
