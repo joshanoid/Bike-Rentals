@@ -6,6 +6,7 @@ import * as cors from 'cors'
 import { db } from './utils/db'
 import usersRoute from './routes/users'
 import authRoute from './routes/auth'
+import bikesRoute from './routes/bikes'
 
 dotenv.config()
 
@@ -20,6 +21,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(usersRoute)
 app.use(authRoute)
+app.use(bikesRoute)
 
 const start = async () => {
     try {
