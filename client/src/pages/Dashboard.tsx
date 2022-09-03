@@ -1,7 +1,9 @@
 import * as React from 'react'
 import {
+    Alert,
     Box,
     Rating,
+    Snackbar,
     Table,
     TableBody,
     TableCell,
@@ -14,24 +16,66 @@ import {
 import { useAuthApi, useAuthContext } from 'utils/auth'
 import { Bike } from 'shared/types'
 import { calculateRating } from 'utils/rating'
+import { getErrorMessage } from 'shared/error'
 
-type BikeWithId = Bike & { _id: string }
+type ExtendedBike = Bike & { _id: string; averageRating: number | null; canRate: boolean }
+
+type SnackbarState = {
+    open: boolean
+    message?: string
+    type?: 'error' | 'success'
+}
 
 export const Dashboard = () => {
     const auth = useAuthContext()
     const authApi = useAuthApi()
-    const [bikes, setBikes] = React.useState<ReadonlyArray<BikeWithId>>([])
+    const [bikes, setBikes] = React.useState<ReadonlyArray<ExtendedBike>>([])
+    const [snackbarState, setSnackbarState] = React.useState<SnackbarState>({ open: false })
 
     React.useEffect(() => {
         const fetchBikes = async () => {
-            const fetchedBikes = await authApi.get<ReadonlyArray<BikeWithId>>('/bikes')
+            const fetchedBikes = await authApi.get<ReadonlyArray<ExtendedBike>>('/bikes')
 
-            setBikes(fetchedBikes.data)
+            setBikes(
+                fetchedBikes.data.map((bike) => ({
+                    ...bike,
+                    averageRating: calculateRating(bike.ratings),
+                    canRate:
+                        bike.ratings.length === 0 ||
+                        bike.ratings.some((rating) => auth?.user.username === rating.username),
+                })),
+            )
         }
 
         void fetchBikes()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    const onRate = async (id: string, rating: number | null) => {
+        try {
+            const response = await authApi.post('/rate', { id, rating })
+
+            setSnackbarState({
+                open: true,
+                type: 'success',
+                message: response.data,
+            })
+        } catch (error) {
+            setSnackbarState({
+                open: true,
+                type: 'error',
+                message: getErrorMessage(error),
+            })
+        }
+    }
+
+    const handleCloseSnackbar = (_event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return
+        }
+
+        setSnackbarState({ open: false })
+    }
 
     return (
         <Box>
@@ -56,10 +100,11 @@ export const Dashboard = () => {
                                 <TableCell align="right">{bike.location}</TableCell>
                                 <TableCell align="right">
                                     <Rating
-                                        value={calculateRating(bike.ratings)}
-                                        readOnly={bike.ratings.some(
-                                            (rating) => auth?.user.username === rating.username,
-                                        )}
+                                        value={bike.averageRating}
+                                        readOnly={!bike.canRate}
+                                        onChange={(_event, value) =>
+                                            onRate(bike._id, value ?? Math.floor(bike.averageRating ?? 0))
+                                        }
                                     />
                                 </TableCell>
                             </TableRow>
@@ -67,6 +112,11 @@ export const Dashboard = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <Snackbar open={snackbarState.open} autoHideDuration={5000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} severity={snackbarState.type} sx={{ width: '100%' }}>
+                    {snackbarState.message}
+                </Alert>
+            </Snackbar>
         </Box>
     )
 }
