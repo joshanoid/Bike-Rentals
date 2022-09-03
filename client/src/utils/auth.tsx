@@ -1,3 +1,4 @@
+import axios from 'axios'
 import * as React from 'react'
 
 import { Auth } from './types'
@@ -39,4 +40,13 @@ export const useAuth = (): [Auth, (authObject: Auth) => void] => {
     }
 
     return [auth, saveAuth]
+}
+
+export const useAuthApi = () => {
+    const auth = useAuthContext()
+
+    return axios.create({
+        baseURL: process.env.API_URL,
+        headers: { Authorization: `Bearer ${auth?.token}` },
+    })
 }
