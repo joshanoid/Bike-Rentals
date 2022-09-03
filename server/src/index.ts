@@ -7,6 +7,7 @@ import { db } from './utils/db'
 import usersRoute from './routes/users'
 import authRoute from './routes/auth'
 import bikesRoute from './routes/bikes'
+import rateRoute from './routes/rate'
 
 dotenv.config()
 
@@ -22,6 +23,7 @@ app.use(bodyParser.json())
 app.use(usersRoute)
 app.use(authRoute)
 app.use(bikesRoute)
+app.use(rateRoute)
 
 const start = async () => {
     try {
