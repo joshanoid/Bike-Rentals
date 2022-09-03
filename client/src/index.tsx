@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 
 import { Layout } from 'components/Layout'
 import { Router } from 'components/Router'
+import { AuthProvider, useAuth } from 'utils/auth'
 
 import './index.css'
 
@@ -12,12 +13,20 @@ const root = createRoot(rootElement)
 
 document.body.append(rootElement)
 
-root.render(
-    <React.StrictMode>
-        <BrowserRouter>
-            <Layout>
-                <Router />
-            </Layout>
-        </BrowserRouter>
-    </React.StrictMode>,
-)
+const App = () => {
+    const [auth, setAuth] = useAuth()
+
+    return (
+        <React.StrictMode>
+            <BrowserRouter>
+                <AuthProvider auth={auth}>
+                    <Layout>
+                        <Router setAuth={setAuth} />
+                    </Layout>
+                </AuthProvider>
+            </BrowserRouter>
+        </React.StrictMode>
+    )
+}
+
+root.render(<App />)
