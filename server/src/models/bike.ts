@@ -1,5 +1,4 @@
 import { model, Schema } from 'mongoose'
-import * as uniqueValidator from 'mongoose-unique-validator'
 
 import { Bike } from 'shared/types'
 
@@ -10,7 +9,6 @@ const bikeSchema = new Schema<Bike>({
     model: {
         type: String,
         required: true,
-        unique: true,
     },
     color: {
         type: String,
@@ -31,7 +29,5 @@ const bikeSchema = new Schema<Bike>({
         default: [],
     },
 })
-
-bikeSchema.plugin(uniqueValidator, { message: 'already exist.' })
 
 export default model<Bike>('Bike', bikeSchema)
