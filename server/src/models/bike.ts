@@ -4,6 +4,7 @@ import * as uniqueValidator from 'mongoose-unique-validator'
 import { Bike } from 'shared/types'
 
 import { ratingSchema } from './rating'
+import { reservationSchema } from './reservation'
 
 const bikeSchema = new Schema<Bike>({
     model: {
@@ -21,6 +22,11 @@ const bikeSchema = new Schema<Bike>({
     },
     ratings: {
         type: [ratingSchema],
+        required: true,
+        default: [],
+    },
+    reservations: {
+        type: [reservationSchema],
         required: true,
         default: [],
     },
