@@ -8,7 +8,7 @@
         "lint": "eslint --ext .ts,.tsx,.js,.jsx ./client/src ./server/src ./shared/src",
         "start-server": "nodemon",
         "mongo": "mongod --dbpath ~/data/db --bind_ip_all",
-        "start-frontend": "webpack serve --config ./client/webpack.config.js --mode development --open"
+        "start-frontend": "NODE_ENV=development webpack serve --config ./client/webpack.config.js --mode development --open"
     },
     "repository": {
         "type": "git",
