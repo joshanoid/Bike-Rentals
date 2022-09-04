@@ -12,3 +12,5 @@ export type SnackbarState = {
     message?: string
     type?: 'error' | 'success'
 }
+
+export type Mode = 'add' | 'edit'
