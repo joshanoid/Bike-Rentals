@@ -14,11 +14,11 @@ import {
 } from '@mui/material'
 
 import { useAuthApi, useAuthContext } from 'utils/auth'
-import { Bike } from 'shared/types'
-import { calculateRating } from 'utils/rating'
 import { getErrorMessage } from 'shared/error'
+import { Rating as RatingType } from 'shared/types'
 
-type ExtendedBike = Bike & { _id: string; averageRating: number | null; canRate: boolean }
+import { bikesReducer } from './utils'
+import { ExtendedBike } from './types'
 
 type SnackbarState = {
     open: boolean
@@ -29,31 +29,31 @@ type SnackbarState = {
 export const Dashboard = () => {
     const auth = useAuthContext()
     const authApi = useAuthApi()
-    const [bikes, setBikes] = React.useState<ReadonlyArray<ExtendedBike>>([])
+    const [bikes, dispatch] = React.useReducer(bikesReducer, [])
     const [snackbarState, setSnackbarState] = React.useState<SnackbarState>({ open: false })
 
     React.useEffect(() => {
         const fetchBikes = async () => {
             const fetchedBikes = await authApi.get<ReadonlyArray<ExtendedBike>>('/bikes')
 
-            setBikes(
-                fetchedBikes.data.map((bike) => ({
-                    ...bike,
-                    averageRating: calculateRating(bike.ratings),
-                    canRate:
-                        bike.ratings.length === 0 ||
-                        bike.ratings.some((rating) => auth?.user.username === rating.username),
-                })),
-            )
+            dispatch({
+                type: 'initialize',
+                payload: {
+                    bikes: fetchedBikes.data,
+                    username: auth?.user.username ?? '',
+                },
+            })
         }
 
         void fetchBikes()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const onRate = async (id: string, rating: number | null) => {
+    const onRate = async (id: string, rating: RatingType['value']) => {
         try {
             const response = await authApi.post('/rate', { id, rating })
+
+            dispatch({ type: 'updateRating', payload: { id, rating, username: auth?.user.username ?? '' } })
 
             setSnackbarState({
                 open: true,
@@ -100,10 +100,10 @@ export const Dashboard = () => {
                                 <TableCell align="right">{bike.location}</TableCell>
                                 <TableCell align="right">
                                     <Rating
-                                        value={bike.averageRating}
+                                        value={bike.canRate ? null : bike.averageRating}
                                         readOnly={!bike.canRate}
                                         onChange={(_event, value) =>
-                                            onRate(bike._id, value ?? Math.floor(bike.averageRating ?? 0))
+                                            value ? onRate(bike._id, value as RatingType['value']) : null
                                         }
                                     />
                                 </TableCell>
