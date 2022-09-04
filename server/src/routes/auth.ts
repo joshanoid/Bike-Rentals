@@ -34,9 +34,10 @@ router
         '/auth/register',
         async (req: express.Request<Record<string, never>, User | string, User>, res: express.Response) => {
             try {
-                await UserModel.create(req.body)
+                const user = await UserModel.create(req.body)
+                const token = generateAccessToken(user)
 
-                res.status(200).send('Registration was successful')
+                res.status(200).send({ user, token })
             } catch (error) {
                 res.status(401).send(getErrorMessage(error))
             }
