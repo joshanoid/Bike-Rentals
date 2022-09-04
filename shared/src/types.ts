@@ -10,6 +10,7 @@ export type Rating = {
 }
 
 export type Reservation = {
+    _id?: string
     from: Date
     to: Date
     username: string
@@ -22,3 +23,5 @@ export type Bike = {
     ratings: ReadonlyArray<Rating>
     reservations: ReadonlyArray<Reservation>
 }
+
+export type DateRange = [Date | null, Date | null]
