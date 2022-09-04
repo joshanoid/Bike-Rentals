@@ -18,6 +18,7 @@ export type Reservation = {
 }
 
 export type Bike = {
+    _id?: string
     model: string
     color: string
     location: string
