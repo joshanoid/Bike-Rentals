@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Alert, Box, Button, Stack, TextField, Typography } from '@mui/material'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 import { getErrorMessage } from 'shared/error'
 import { Auth } from 'utils/types'
@@ -13,6 +14,7 @@ export const Login = ({ setAuth }: Props) => {
     const usernameRef = React.useRef<HTMLInputElement>(null)
     const passwordRef = React.useRef<HTMLInputElement>(null)
     const [requestError, setRequestError] = React.useState('')
+    const navigate = useNavigate()
 
     const onClick = async (mode: 'login' | 'register') => {
         const username = usernameRef.current?.value
@@ -29,6 +31,7 @@ export const Login = ({ setAuth }: Props) => {
             })
 
             setAuth({ user, token })
+            navigate(user.type === 'manager' ? '/admin/bikes' : '/dashboard')
         } catch (error) {
             setRequestError(getErrorMessage(error))
         }
