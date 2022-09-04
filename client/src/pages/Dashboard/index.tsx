@@ -10,14 +10,18 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    TextField,
     Typography,
 } from '@mui/material'
+import { LocalizationProvider } from '@mui/x-date-pickers-pro'
+import { AdapterDateFns } from '@mui/x-date-pickers-pro/AdapterDateFns'
+import { DateRangePicker, DateRange } from '@mui/x-date-pickers-pro/DateRangePicker'
 
 import { useAuthApi, useAuthContext } from 'utils/auth'
 import { getErrorMessage } from 'shared/error'
 import { Rating as RatingType } from 'shared/types'
 
-import { bikesReducer } from './utils'
+import { bikesReducer, isDateRangeAvailable } from './utils'
 import { ExtendedBike } from './types'
 
 type SnackbarState = {
@@ -31,6 +35,7 @@ export const Dashboard = () => {
     const authApi = useAuthApi()
     const [bikes, dispatch] = React.useReducer(bikesReducer, [])
     const [snackbarState, setSnackbarState] = React.useState<SnackbarState>({ open: false })
+    const [dateRange, setDateRange] = React.useState<DateRange<Date>>([null, null])
 
     React.useEffect(() => {
         const fetchBikes = async () => {
@@ -78,45 +83,66 @@ export const Dashboard = () => {
     }
 
     return (
-        <Box>
-            <Typography variant="h2">Bikes</Typography>
-            <TableContainer>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Model</TableCell>
-                            <TableCell align="right">Color</TableCell>
-                            <TableCell align="right">Location</TableCell>
-                            <TableCell align="right">Rating</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {bikes.map((bike) => (
-                            <TableRow key={bike._id}>
-                                <TableCell component="th" scope="row">
-                                    {bike.model}
-                                </TableCell>
-                                <TableCell align="right">{bike.color}</TableCell>
-                                <TableCell align="right">{bike.location}</TableCell>
-                                <TableCell align="right">
-                                    <Rating
-                                        value={bike.canRate ? null : bike.averageRating}
-                                        readOnly={!bike.canRate}
-                                        onChange={(_event, value) =>
-                                            value ? onRate(bike._id, value as RatingType['value']) : null
-                                        }
-                                    />
-                                </TableCell>
+        <LocalizationProvider dateAdapter={AdapterDateFns} localeText={{ start: 'From', end: 'To' }}>
+            <Box>
+                <Typography variant="h2">Bikes</Typography>
+                <DateRangePicker
+                    disablePast
+                    value={dateRange}
+                    onChange={(newValue) => {
+                        setDateRange(newValue)
+                        dispatch({ type: 'filter', payload: { dateRange: newValue } })
+                    }}
+                    renderInput={(startProps, endProps) => (
+                        <>
+                            <TextField {...startProps} />
+                            <Box sx={{ mx: 2 }}> to </Box>
+                            <TextField {...endProps} />
+                        </>
+                    )}
+                />
+                <TableContainer>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Model</TableCell>
+                                <TableCell align="right">Color</TableCell>
+                                <TableCell align="right">Location</TableCell>
+                                <TableCell align="right">Rating</TableCell>
+                                <TableCell align="right">Reservation</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <Snackbar open={snackbarState.open} autoHideDuration={5000} onClose={handleCloseSnackbar}>
-                <Alert onClose={handleCloseSnackbar} severity={snackbarState.type} sx={{ width: '100%' }}>
-                    {snackbarState.message}
-                </Alert>
-            </Snackbar>
-        </Box>
+                        </TableHead>
+                        <TableBody>
+                            {bikes.map((bike) => (
+                                <TableRow key={bike._id}>
+                                    <TableCell component="th" scope="row">
+                                        {bike.model}
+                                    </TableCell>
+                                    <TableCell align="right">{bike.color}</TableCell>
+                                    <TableCell align="right">{bike.location}</TableCell>
+                                    <TableCell align="right">
+                                        <Rating
+                                            value={bike.canRate ? null : bike.averageRating}
+                                            readOnly={!bike.canRate}
+                                            onChange={(_event, value) =>
+                                                value ? onRate(bike._id, value as RatingType['value']) : null
+                                            }
+                                        />
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {isDateRangeAvailable(dateRange, bike.reservations) ? 'Yeah' : 'No'}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <Snackbar open={snackbarState.open} autoHideDuration={5000} onClose={handleCloseSnackbar}>
+                    <Alert onClose={handleCloseSnackbar} severity={snackbarState.type} sx={{ width: '100%' }}>
+                        {snackbarState.message}
+                    </Alert>
+                </Snackbar>
+            </Box>
+        </LocalizationProvider>
     )
 }
