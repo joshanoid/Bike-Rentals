@@ -8,6 +8,7 @@ import usersRoute from './routes/users'
 import authRoute from './routes/auth'
 import bikesRoute from './routes/bikes'
 import rateRoute from './routes/rate'
+import reserveRoute from './routes/reserve'
 
 dotenv.config()
 
@@ -24,6 +25,7 @@ app.use(usersRoute)
 app.use(authRoute)
 app.use(bikesRoute)
 app.use(rateRoute)
+app.use(reserveRoute)
 
 const start = async () => {
     try {
