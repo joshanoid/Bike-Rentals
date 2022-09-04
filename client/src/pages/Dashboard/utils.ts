@@ -3,7 +3,7 @@ import { eachDayOfInterval, isEqual, isWithinInterval, startOfDay } from 'date-f
 import { DateRange, Rating, Reservation } from 'shared/types'
 import { calculateRating } from 'utils/rating'
 
-import { ExtendedBike } from './types'
+import { ExtendedBike, Filters } from './types'
 
 type Action =
     | {
@@ -16,10 +16,6 @@ type Action =
     | {
           type: 'updateRating'
           payload: { id: string; rating: Rating['value']; username: string }
-      }
-    | {
-          type: 'filter'
-          payload: { dateRange: DateRange }
       }
     | {
           type: 'updateBike'
@@ -97,8 +93,25 @@ export const getReservationByDateRange = (
     )
 }
 
-const filter = (bikes: ReadonlyArray<ExtendedBike>, _dateRangeIgnored: DateRange) => bikes
-// bikes.filter((bike) => isDateRangeAvailable(dateRange, bike.reservations))
+export const defaultFilters = { model: '', location: '', color: '', rating: null }
+
+export const filterBikes = (bikes: ReadonlyArray<ExtendedBike>, filters: Filters) => {
+    const filtersArray = Object.entries(filters) as ReadonlyArray<[keyof Filters, Filters[keyof Filters]]>
+
+    return bikes.filter((bike) =>
+        filtersArray.every(([type, value]) => {
+            if (!value) {
+                return true
+            }
+
+            if (type === 'rating') {
+                return Math.ceil(bike.averageRating as number) === value
+            }
+
+            return bike[type] === value
+        }),
+    )
+}
 
 const updateBike = (
     bikes: ReadonlyArray<ExtendedBike>,
@@ -121,8 +134,6 @@ export const bikesReducer = (state: ReadonlyArray<ExtendedBike>, action: Action)
             return initialize(action.payload.bikes, action.payload.username)
         case 'updateRating':
             return updateRating(state, action.payload)
-        case 'filter':
-            return filter(state, action.payload.dateRange)
         case 'updateBike':
             return updateBike(state, action.payload)
         default:
