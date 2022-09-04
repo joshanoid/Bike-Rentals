@@ -1,15 +1,15 @@
-import { eachDayOfInterval, isWithinInterval } from 'date-fns'
+import { eachDayOfInterval, isEqual, isWithinInterval, startOfDay } from 'date-fns'
 
-import { Bike, Rating, Reservation } from 'shared/types'
+import { DateRange, Rating, Reservation } from 'shared/types'
 import { calculateRating } from 'utils/rating'
 
-import { DateRange, ExtendedBike } from './types'
+import { ExtendedBike } from './types'
 
 type Action =
     | {
           type: 'initialize'
           payload: {
-              bikes: ReadonlyArray<Bike & { _id: string }>
+              bikes: ReadonlyArray<ExtendedBike>
               username: string
           }
       }
@@ -21,13 +21,24 @@ type Action =
           type: 'filter'
           payload: { dateRange: DateRange }
       }
+    | {
+          type: 'updateBike'
+          payload: { id: string; updatedBike: ExtendedBike; username: string }
+      }
 
-const initialize = (bikes: ReadonlyArray<Bike & { _id: string }>, username: string) =>
-    bikes.map((bike) => ({
-        ...bike,
-        averageRating: calculateRating(bike.ratings),
-        canRate: bike.ratings.length === 0 || !bike.ratings.some((rating) => username === rating.username),
-    }))
+const initializeBike = (bike: ExtendedBike, username: string) => ({
+    ...bike,
+    averageRating: calculateRating(bike.ratings),
+    canRate: bike.ratings.length === 0 || !bike.ratings.some((rating) => username === rating.username),
+    reservations: bike.reservations.map((reservation) => ({
+        ...reservation,
+        from: startOfDay(new Date(reservation.from)),
+        to: startOfDay(new Date(reservation.to)),
+    })),
+})
+
+const initialize = (bikes: ReadonlyArray<ExtendedBike>, username: string) =>
+    bikes.map((bike) => initializeBike(bike, username))
 
 const updateRating = (
     state: ReadonlyArray<ExtendedBike>,
@@ -52,17 +63,14 @@ const updateRating = (
     return state
 }
 
-export const isDateRangeAvailable = (
-    dateRange: [Date | null, Date | null],
-    reservations: ReadonlyArray<Reservation>,
-) => {
+export const isDateRangeAvailable = (dateRange: DateRange, reservations: ReadonlyArray<Reservation>) => {
     const [from, to] = dateRange
 
     if (reservations.length === 0 || !from || !to) {
         return true
     }
 
-    return eachDayOfInterval({ start: from, end: to }).every((date) =>
+    return !eachDayOfInterval({ start: from, end: to }).every((date) =>
         reservations.some((reservation) =>
             isWithinInterval(date, {
                 start: reservation.from,
@@ -72,8 +80,40 @@ export const isDateRangeAvailable = (
     )
 }
 
-const filter = (bikes: ReadonlyArray<ExtendedBike>, dateRange: DateRange) =>
-    bikes.filter((bike) => isDateRangeAvailable(dateRange, bike.reservations))
+export const getReservationByDateRange = (
+    dateRange: DateRange,
+    reservations: ReadonlyArray<Reservation>,
+    username: string,
+) => {
+    const [from, to] = dateRange
+
+    if (reservations.length === 0 || !from || !to) {
+        return undefined
+    }
+
+    return reservations.find(
+        (reservation) =>
+            isEqual(from, reservation.from) && isEqual(to, reservation.to) && username === reservation.username,
+    )
+}
+
+const filter = (bikes: ReadonlyArray<ExtendedBike>, _dateRangeIgnored: DateRange) => bikes
+// bikes.filter((bike) => isDateRangeAvailable(dateRange, bike.reservations))
+
+const updateBike = (
+    bikes: ReadonlyArray<ExtendedBike>,
+    payload: { id: string; updatedBike: ExtendedBike; username: string },
+) => {
+    const { id, updatedBike, username } = payload
+    const index = bikes.findIndex((bike) => bike._id === id)
+    const bike = bikes[index]
+
+    if (bike) {
+        return [...bikes.slice(0, index), initializeBike(updatedBike, username), ...bikes.slice(index + 1)]
+    }
+
+    return bikes
+}
 
 export const bikesReducer = (state: ReadonlyArray<ExtendedBike>, action: Action): ReadonlyArray<ExtendedBike> => {
     switch (action.type) {
@@ -83,5 +123,9 @@ export const bikesReducer = (state: ReadonlyArray<ExtendedBike>, action: Action)
             return updateRating(state, action.payload)
         case 'filter':
             return filter(state, action.payload.dateRange)
+        case 'updateBike':
+            return updateBike(state, action.payload)
+        default:
+            return state
     }
 }

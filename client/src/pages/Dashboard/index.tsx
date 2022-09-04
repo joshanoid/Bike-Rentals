@@ -21,14 +21,9 @@ import { useAuthApi, useAuthContext } from 'utils/auth'
 import { getErrorMessage } from 'shared/error'
 import { Rating as RatingType } from 'shared/types'
 
-import { bikesReducer, isDateRangeAvailable } from './utils'
-import { ExtendedBike } from './types'
-
-type SnackbarState = {
-    open: boolean
-    message?: string
-    type?: 'error' | 'success'
-}
+import { bikesReducer } from './utils'
+import { ExtendedBike, SnackbarState } from './types'
+import { Reservation } from './Reservation'
 
 export const Dashboard = () => {
     const auth = useAuthContext()
@@ -130,7 +125,12 @@ export const Dashboard = () => {
                                         />
                                     </TableCell>
                                     <TableCell align="right">
-                                        {isDateRangeAvailable(dateRange, bike.reservations) ? 'Yeah' : 'No'}
+                                        <Reservation
+                                            bike={bike}
+                                            dateRange={dateRange}
+                                            dispatch={dispatch}
+                                            setSnackbarState={setSnackbarState}
+                                        />
                                     </TableCell>
                                 </TableRow>
                             ))}
