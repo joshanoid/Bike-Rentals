@@ -9,9 +9,16 @@ export type Rating = {
     value: 1 | 2 | 3 | 4 | 5
 }
 
+export type Reservation = {
+    from: Date
+    to: Date
+    username: string
+}
+
 export type Bike = {
     model: string
     color: string
     location: string
     ratings: ReadonlyArray<Rating>
+    reservations: ReadonlyArray<Reservation>
 }
