@@ -5,9 +5,10 @@ import { startOfDay } from 'date-fns'
 import { useAuthApi, useAuthContext } from 'utils/auth'
 import { getErrorMessage } from 'shared/error'
 import { DateRange, Reservation as ReservationType } from 'shared/types'
+import { SnackbarState } from 'utils/types'
 
 import { bikesReducer, getReservationByDateRange, isDateRangeAvailable } from './utils'
-import { ExtendedBike, SnackbarState } from './types'
+import { ExtendedBike } from './types'
 
 type Props = {
     dateRange: DateRange
