@@ -7,6 +7,8 @@ import { Logout } from 'pages/Logout'
 import { Dashboard } from 'pages/Dashboard'
 import { useAuthContext } from 'utils/auth'
 import { Auth } from 'utils/types'
+import { Bikes } from 'pages/Bikes'
+import { Users } from 'pages/Users'
 
 type ProtectedRouteProps = {
     children: JSX.Element
@@ -16,6 +18,12 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     const auth = useAuthContext()
 
     return auth ? children : <Navigate to="/login" />
+}
+
+const ManagerRoute = ({ children }: ProtectedRouteProps) => {
+    const auth = useAuthContext()
+
+    return auth?.user.type === 'manager' ? children : <Navigate to="/login" />
 }
 
 type Props = {
@@ -33,6 +41,22 @@ export const Router = ({ setAuth }: Props) => (
                 <ProtectedRoute>
                     <Dashboard />
                 </ProtectedRoute>
+            }
+        />
+        <Route
+            path="/admin/bikes"
+            element={
+                <ManagerRoute>
+                    <Bikes />
+                </ManagerRoute>
+            }
+        />
+        <Route
+            path="/admin/users"
+            element={
+                <ManagerRoute>
+                    <Users />
+                </ManagerRoute>
             }
         />
         <Route path="*" element={<Navigate to="/login" />} />
