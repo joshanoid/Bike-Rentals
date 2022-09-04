@@ -5,7 +5,6 @@ import {
     DialogContent,
     DialogActions,
     Button,
-    DialogContentText,
     Table,
     TableBody,
     TableCell,
@@ -58,10 +57,8 @@ export const ReservationsDialog = ({ user, open, setOpen }: Omit<DialogState, 'd
 
     return open ? (
         <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Delete User</DialogTitle>
+            <DialogTitle>Reserved Bikes</DialogTitle>
             <DialogContent>
-                <DialogContentText>Reserved Bikes</DialogContentText>
-
                 <TableContainer>
                     <Table>
                         <TableHead>
