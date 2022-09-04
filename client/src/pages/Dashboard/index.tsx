@@ -18,9 +18,10 @@ import { DateRange } from '@mui/x-date-pickers-pro/DateRangePicker'
 import { useAuthApi, useAuthContext } from 'utils/auth'
 import { getErrorMessage } from 'shared/error'
 import { Rating as RatingType } from 'shared/types'
+import { SnackbarState } from 'utils/types'
 
 import { bikesReducer, defaultFilters, filterBikes } from './utils'
-import { ExtendedBike, Filters as FiltersType, SnackbarState } from './types'
+import { ExtendedBike, Filters as FiltersType } from './types'
 import { Reservation } from './Reservation'
 import { Filters } from './Filters'
 
