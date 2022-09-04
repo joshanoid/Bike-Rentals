@@ -1,7 +1,9 @@
-import { Bike, Rating } from 'shared/types'
+import { eachDayOfInterval, isWithinInterval } from 'date-fns'
+
+import { Bike, Rating, Reservation } from 'shared/types'
 import { calculateRating } from 'utils/rating'
 
-import { ExtendedBike } from './types'
+import { DateRange, ExtendedBike } from './types'
 
 type Action =
     | {
@@ -14,6 +16,10 @@ type Action =
     | {
           type: 'updateRating'
           payload: { id: string; rating: Rating['value']; username: string }
+      }
+    | {
+          type: 'filter'
+          payload: { dateRange: DateRange }
       }
 
 const initialize = (bikes: ReadonlyArray<Bike & { _id: string }>, username: string) =>
@@ -46,11 +52,36 @@ const updateRating = (
     return state
 }
 
+export const isDateRangeAvailable = (
+    dateRange: [Date | null, Date | null],
+    reservations: ReadonlyArray<Reservation>,
+) => {
+    const [from, to] = dateRange
+
+    if (reservations.length === 0 || !from || !to) {
+        return true
+    }
+
+    return eachDayOfInterval({ start: from, end: to }).every((date) =>
+        reservations.some((reservation) =>
+            isWithinInterval(date, {
+                start: reservation.from,
+                end: reservation.to,
+            }),
+        ),
+    )
+}
+
+const filter = (bikes: ReadonlyArray<ExtendedBike>, dateRange: DateRange) =>
+    bikes.filter((bike) => isDateRangeAvailable(dateRange, bike.reservations))
+
 export const bikesReducer = (state: ReadonlyArray<ExtendedBike>, action: Action): ReadonlyArray<ExtendedBike> => {
     switch (action.type) {
         case 'initialize':
             return initialize(action.payload.bikes, action.payload.username)
         case 'updateRating':
             return updateRating(state, action.payload)
+        case 'filter':
+            return filter(state, action.payload.dateRange)
     }
 }
