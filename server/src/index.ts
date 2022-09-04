@@ -30,6 +30,7 @@ app.use(reserveRoute)
 const start = async () => {
     try {
         await db.connect()
+        await db.addAdminUserIfNotExist()
 
         app.listen(3000, () => console.log('Server started on port 3000'))
     } catch (error) {
