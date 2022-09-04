@@ -4,11 +4,11 @@
 
 Install the following:
 
--   node v16.13.0 (if you use nvm just install it with `nvm install 16.13.0` and then run `nvm use`)
+-   node v16.13.0 (if you use nvm just install it with `nvm install 16.13.0`)
 -   npm 8.1.0
 -   MongoDB v6.0.1
 
-Then run `npm install`
+Then run `nvm use` and `npm install`
 
 ## How to run locally
 
