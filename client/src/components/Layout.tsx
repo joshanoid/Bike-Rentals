@@ -10,6 +10,7 @@ type Props = {
 
 export const Layout = ({ children }: Props) => {
     const auth = useAuthContext()
+    const isManager = auth?.user.type === 'manager'
 
     return (
         <Box>
@@ -22,7 +23,9 @@ export const Layout = ({ children }: Props) => {
                 <Stack padding={2} direction="row" spacing={1} justifyContent="center">
                     <Link to="/">Home</Link>
                     {auth ? <Link to="/logout">Logout</Link> : <Link to="/login">Login</Link>}
-                    {auth && <Link to="/dashboard">Dashboard</Link>}
+                    {auth && !isManager && <Link to="/dashboard">Dashboard</Link>}
+                    {isManager && <Link to="/admin/bikes">Manage Bikes</Link>}
+                    {isManager && <Link to="/admin/users">Manage Users</Link>}
                 </Stack>
                 <Box padding={2}>{children}</Box>
             </Stack>
