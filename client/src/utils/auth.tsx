@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 import * as React from 'react'
 
 import { Auth } from './types'
@@ -44,9 +45,27 @@ export const useAuth = (): [Auth, (authObject: Auth) => void] => {
 
 export const useAuthApi = () => {
     const auth = useAuthContext()
+    const navigate = useNavigate()
 
-    return axios.create({
+    const instance = axios.create({
         baseURL: process.env.API_URL,
         headers: { Authorization: `Bearer ${auth?.token}` },
     })
+
+    instance.interceptors.response.use(
+        (response) => response,
+        (error) => {
+            if (axios.isAxiosError(error)) {
+                const { response } = error
+
+                if (response?.status === 403) {
+                    return navigate('/logout')
+                }
+            }
+
+            return Promise.reject(error)
+        },
+    )
+
+    return instance
 }
